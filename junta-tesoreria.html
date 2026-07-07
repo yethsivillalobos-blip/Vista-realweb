@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesorería — Vista Real</title>
+<meta name="description" content="Panel de Tesorería de Vista Real: tasa BCV del día, resumen de pagos y generación de facturas en PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#15140F;
+    --paper:#FFFFFF;
+    --paper-soft:#F5F4EF;
+    --gold:#C69A3B;
+    --gold-deep:#A97F27;
+    --line: rgba(21,20,15,0.14);
+    --radius: 2px;
+    --max: 720px;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:400;
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{display:block;max-width:100%;}
+  a{color:inherit;}
+
+  h1,h2,h3{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:900;
+    letter-spacing:-0.03em;
+    line-height:1.02;
+    margin:0;
+  }
+
+  p{ font-weight:400; }
+
+  .eyebrow{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:700;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+  }
+
+  .wrap{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  :focus-visible{
+    outline:3px solid var(--gold-deep);
+    outline-offset:3px;
+  }
+
+  /* ---------- Roofline motif (signature element) ---------- */
+  .roofline{
+    width:100%;
+    height:34px;
+    display:block;
+  }
+  .roofline path{
+    fill:none;
+    stroke:var(--gold);
+    stroke-width:2.5;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  /* ---------- Site header / nav ---------- */
+  .site-header{
+    border-bottom:1px solid var(--line);
+  }
+  .header-inner{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:18px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:relative;
+  }
+  .brand-link{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+  }
+  .brandmark{ width:34px; height:34px; flex-shrink:0; }
+  .brandmark path{ fill:var(--gold); }
+  .brandtext{
+    display:flex;
+    flex-direction:column;
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:600;
+    font-size:0.68rem;
+    letter-spacing:0.08em;
+    line-height:1.3;
+  }
+  .brandtext strong{
+    font-weight:800;
+    color:var(--ink);
+    font-size:0.78rem;
+    letter-spacing:0.04em;
+  }
+  .brandtext span:first-child{ color:rgba(21,20,15,0.55); }
+
+  .nav-toggle{
+    display:inline-flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:5px;
+    width:36px;
+    height:36px;
+    padding:0;
+    background:none;
+    border:none;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .nav-toggle span{
+    display:block;
+    width:20px;
+    height:2px;
+    background:var(--ink);
+    transition:transform .2s ease, opacity .2s ease;
+  }
+  .nav-toggle[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+  .nav-toggle[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  .site-nav{
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .site-nav.is-open{ max-height:280px; }
+  .site-nav a{
+    padding:14px 24px;
+    text-decoration:none;
+    font-weight:600;
+    font-size:0.95rem;
+    border-top:1px solid var(--line);
+  }
+  .site-nav a[aria-current="page"]{ color:var(--gold-deep); }
+
+  @media (min-width:720px){
+    .nav-toggle{ display:none; }
+    .site-nav{
+      position:static;
+      max-height:none;
+      overflow:visible;
+      flex-direction:row;
+      background:none;
+      border-bottom:none;
+    }
+    .site-nav a{
+      padding:0;
+      border-top:none;
+      margin-left:32px;
+      font-size:0.92rem;
+    }
+  }
+
+  /* ---------- Page hero (interior pages) ---------- */
+  .page-hero{
+    padding:52px 0 40px;
+  }
+  .page-hero h1{
+    font-size:2.4rem;
+  }
+  .page-hero .sub{
+    margin-top:18px;
+    font-size:1.05rem;
+    font-weight:400;
+    color:rgba(21,20,15,0.68);
+    max-width:48ch;
+    line-height:1.6;
+  }
+  @media (min-width:720px){
+    .page-hero h1{ font-size:3.2rem; }
+  }
+
+  /* ---------- Divider ---------- */
+  .divider-wrap{ background:var(--paper-soft); }
+  .divider-wrap .roofline path{ stroke:var(--ink); opacity:0.12; }
+
+  /* ---------- Buttons ---------- */
+  .cta-group{
+    margin-top:32px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .btn{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:700;
+    font-size:1rem;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:15px 28px;
+    border-radius:var(--radius);
+    border:2px solid transparent;
+    transition:transform .2s ease, background .2s ease, border-color .2s ease;
+    width:100%;
+    cursor:pointer;
+  }
+  .btn-primary{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .btn-primary:hover{ background:var(--gold-deep); transform:translateY(-2px); }
+  .btn-secondary{
+    background:transparent;
+    color:var(--ink);
+    border-color:var(--line);
+    font-size:0.92rem;
+    padding:12px 24px;
+  }
+  .btn-secondary:hover{ border-color:var(--ink); transform:translateY(-2px); }
+
+  @media (min-width:560px){
+    .cta-group{ flex-direction:row; align-items:center; }
+    .btn{ width:auto; }
+  }
+
+  /* ---------- About body ---------- */
+  .about{
+    background:var(--paper-soft);
+    padding:52px 0 60px;
+  }
+  .about .intro{
+    max-width:60ch;
+  }
+  .about .intro p{
+    margin:0 0 16px;
+    color:rgba(21,20,15,0.72);
+    font-size:1.02rem;
+    line-height:1.7;
+  }
+  .about .intro p:last-child{ margin-bottom:0; }
+  .benefit-list{
+    display:grid;
+    gap:20px;
+    margin-top:36px;
+  }
+  .benefit{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    padding:24px 22px;
+  }
+  .benefit .eyebrow{ margin-bottom:10px; }
+  .benefit h3{
+    font-size:1.15rem;
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .benefit p{
+    margin:0;
+    font-weight:400;
+    color:rgba(21,20,15,0.68);
+    font-size:0.98rem;
+    line-height:1.6;
+  }
+
+  @media (min-width:720px){
+    .benefit-list{ grid-template-columns:repeat(3,1fr); }
+  }
+
+  /* ---------- Final CTA ---------- */
+  .final-cta{
+    background:var(--ink);
+    color:var(--paper);
+    padding:56px 0 60px;
+    text-align:left;
+  }
+  .final-cta .roofline path{ stroke:var(--gold); opacity:0.5; }
+  .final-cta h2{
+    color:var(--paper);
+    font-size:1.9rem;
+    font-weight:900;
+    margin-top:16px;
+  }
+  .final-cta .sub{
+    margin-top:14px;
+    font-weight:400;
+    color:rgba(255,255,255,0.7);
+    max-width:38ch;
+    line-height:1.6;
+  }
+  .final-cta .cta-group{ margin-top:28px; }
+  .final-cta .btn-primary{
+    background:var(--gold);
+    color:var(--ink);
+  }
+  .final-cta .btn-primary:hover{ background:#fff; }
+  .final-cta .btn-secondary{
+    color:var(--paper);
+    border-color:rgba(255,255,255,0.3);
+  }
+  .final-cta .btn-secondary:hover{ border-color:var(--paper); }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding:26px 24px 34px;
+    text-align:center;
+  }
+  footer p{
+    margin:0;
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:600;
+    font-size:0.7rem;
+    letter-spacing:0.06em;
+    color:rgba(21,20,15,0.45);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity 1.3s ease, transform 1.3s ease;
+  }
+  .reveal.is-visible{
+    opacity:1;
+    transform:none;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{
+      opacity:1;
+      transform:none;
+      transition:none;
+    }
+  }
+
+  /* ---------- Services-style section wrapper (reused across role pages) ---------- */
+  .services{
+    background:var(--paper-soft);
+    padding:52px 0 60px;
+  }
+  .services .kicker{ margin-bottom:28px; }
+  .services .kicker h2{
+    font-size:1.6rem;
+    font-weight:800;
+    margin-top:8px;
+  }
+  .benefits{
+    background:var(--paper-soft);
+    padding:52px 0 60px;
+  }
+  .benefits .kicker{ margin-bottom:28px; }
+  .benefits .kicker h2{
+    font-size:1.6rem;
+    font-weight:800;
+    margin-top:8px;
+  }
+  .contact-section{
+    background:var(--paper-soft);
+    padding:52px 0 60px;
+  }
+  .contact-form-wrap{
+    padding:56px 0 60px;
+  }
+  .contact-form-wrap .kicker h2{
+    font-size:1.6rem;
+    font-weight:800;
+    margin-top:8px;
+    margin-bottom:8px;
+  }
+  .contact-form-wrap .kicker p{
+    color:rgba(21,20,15,0.68);
+    font-size:0.98rem;
+    max-width:46ch;
+  }
+
+  /* ---------- Duty list ---------- */
+  .duty-list{
+    margin-top:32px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .duty{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    padding:18px 20px;
+  }
+  .duty h3{
+    font-size:1rem;
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .duty p{
+    margin:0;
+    font-weight:400;
+    color:rgba(21,20,15,0.68);
+    font-size:0.96rem;
+    line-height:1.6;
+  }
+  .role-note{
+    margin-top:18px;
+    font-size:0.88rem;
+    color:rgba(21,20,15,0.55);
+    max-width:60ch;
+  }
+
+  /* ---------- Role cards (junta.html overview) ---------- */
+  .role-list{
+    display:grid;
+    gap:20px;
+    margin-top:8px;
+  }
+  .role-card{
+    display:block;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    padding:24px 22px;
+    text-decoration:none;
+    transition:transform .2s ease, border-color .2s ease;
+  }
+  .role-card:hover{ transform:translateY(-2px); border-color:var(--ink); }
+  .role-card h3{
+    font-size:1.2rem;
+    font-weight:800;
+    margin-bottom:8px;
+  }
+  .role-card p{
+    margin:0 0 10px;
+    font-weight:400;
+    color:rgba(21,20,15,0.68);
+    font-size:0.97rem;
+    line-height:1.6;
+  }
+  .role-card .go{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:700;
+    font-size:0.85rem;
+    color:var(--gold-deep);
+  }
+  @media (min-width:720px){
+    .role-list{ grid-template-columns:repeat(2,1fr); }
+  }
+
+  /* ---------- Rate widget ---------- */
+  .rate-widget{
+    background:var(--ink);
+    color:var(--paper);
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-top:8px;
+  }
+  .rate-widget .eyebrow{ color:var(--gold); }
+  .rate-value{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:900;
+    font-size:2rem;
+    letter-spacing:-0.02em;
+  }
+  .rate-meta{
+    font-size:0.82rem;
+    color:rgba(255,255,255,0.6);
+  }
+
+  /* ---------- Summary cards ---------- */
+  .summary-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    margin-top:24px;
+  }
+  .summary-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    padding:18px;
+    text-align:center;
+  }
+  .summary-num{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:900;
+    font-size:1.9rem;
+  }
+  .summary-label{
+    font-size:0.78rem;
+    color:rgba(21,20,15,0.6);
+    margin-top:4px;
+  }
+  .summary-note{
+    margin-top:14px;
+    font-size:0.85rem;
+    color:rgba(21,20,15,0.55);
+  }
+  @media (min-width:560px){
+    .summary-grid{ grid-template-columns:repeat(4,1fr); }
+  }
+  .board-link{
+    margin-top:20px;
+    display:inline-flex;
+  }
+
+  /* ---------- Invoice form ---------- */
+  .invoice-form{
+    margin-top:32px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    max-width:520px;
+  }
+  .field{ display:flex; flex-direction:column; gap:7px; }
+  .field label{ font-size:0.85rem; font-weight:700; }
+  .field input{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-size:1rem;
+    font-weight:400;
+    padding:13px 14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .field input:focus{
+    outline:3px solid var(--gold-deep);
+    outline-offset:2px;
+    border-color:var(--gold-deep);
+  }
+  .field-row{ display:flex; gap:14px; }
+  .field-row .field{ flex:1; }
+  .form-note{ font-size:0.85rem; color:rgba(21,20,15,0.55); margin:-4px 0 0; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>\n</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand-link">
+        <svg class="brandmark" viewBox="0 0 40 40" aria-hidden="true">
+          <path d="M2 32 L11 14 L20 32 Z M14 32 L23 8 L32 32 Z M26 32 L32 20 L38 32 Z"/>
+        </svg>
+        <span class="brandtext">
+          <span>CONJUNTO RESIDENCIAL</span>
+          <strong>VISTA REAL</strong>
+        </span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="siteNav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+        <a href="index.html">Inicio</a>
+        <a href="nuestros-servicios.html">Servicios</a>
+        <a href="sobre-mi.html">Sobre nosotros</a>
+        <a href="junta.html" aria-current="page">Junta</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">Tesorería</p>
+      <h1>Panel de Tesorería</h1>
+      <p class="sub">Control de pagos, tasa de cambio del día y generación de facturas para los propietarios.</p>
+    </div>
+  </section>
+
+  <div class="divider-wrap">
+    <svg class="roofline wrap" viewBox="0 0 720 34" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 30 L60 6 L120 30 L180 6 L240 30 L300 6 L360 30 L420 6 L480 30 L540 6 L600 30 L660 6 L720 30"/>
+    </svg>
+  </div>
+
+  <!-- FUNCIONES -->
+  <section class="services reveal">
+    <div class="wrap">
+      <div class="kicker">
+        <p class="eyebrow">Funciones principales</p>
+        <h2>Responsabilidades</h2>
+      </div>
+      <div class="duty-list">
+        <div class="duty">
+          <h3>Contabilidad del condominio</h3>
+          <p>Lleva la relación mensual de ingresos y gastos, y el archivo de facturas y depósitos.</p>
+        </div>
+        <div class="duty">
+          <h3>Lista de solventes y morosos</h3>
+          <p>Elabora la lista mensual de propietarios al día y en mora con sus obligaciones de condominio.</p>
+        </div>
+        <div class="duty">
+          <h3>Rendición de cuentas</h3>
+          <p>Presenta el informe de su gestión a la Junta y a la Asamblea de Copropietarios.</p>
+        </div>
+      </div>
+      <p class="role-note">Cargo contemplado en el Artículo 18 de la Ley de Propiedad Horizontal, junto a la Presidencia y la Secretaría.</p>
+    </div>
+  </section>
+
+  <!-- TASA BCV -->
+  <section class="contact-section reveal">
+    <div class="wrap">
+      <div class="kicker">
+        <p class="eyebrow">Tasa del día</p>
+        <h2 style="font-size:1.6rem;font-weight:800;margin-top:8px;">Tipo de cambio oficial BCV</h2>
+      </div>
+      <div class="rate-widget">
+        <p class="eyebrow">Dólar BCV hoy</p>
+        <p class="rate-value" id="tasaValor">Cargando…</p>
+        <p class="rate-meta" id="tasaFecha">Consultando fuente oficial…</p>
+        <p class="rate-meta">Fuente: dolarapi.com, con base en la tasa publicada por el Banco Central de Venezuela.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUMEN DE PAGOS -->
+  <section class="services reveal">
+    <div class="wrap">
+      <div class="kicker">
+        <p class="eyebrow">Transparencia para todos</p>
+        <h2>Resumen de pagos del mes</h2>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <p class="summary-num" id="numAlDia">—</p>
+          <p class="summary-label">Al día</p>
+        </div>
+        <div class="summary-card">
+          <p class="summary-num" id="numRetraso">—</p>
+          <p class="summary-label">Con retraso</p>
+        </div>
+        <div class="summary-card">
+          <p class="summary-num" id="numMorosos">—</p>
+          <p class="summary-label">Morosos</p>
+        </div>
+        <div class="summary-card">
+          <p class="summary-num" id="pctCobranza">—</p>
+          <p class="summary-label">% de cobranza</p>
+        </div>
+      </div>
+      <p class="summary-note" id="resumenNota">Cargando datos…</p>
+      <a class="board-link btn btn-secondary" href="#" id="linkDetalleJunta">Ver detalle completo (solo Junta) →</a>
+    </div>
+  </section>
+
+  <!-- FACTURA -->
+  <section class="contact-form-wrap reveal">
+    <div class="wrap">
+      <div class="kicker">
+        <p class="eyebrow">Uso interno de la Junta</p>
+        <h2>Generar factura de condominio</h2>
+        <p>Completa los datos del propietario y descarga el recibo en PDF, con el monto convertido a bolívares según la tasa BCV del día.</p>
+      </div>
+      <form class="invoice-form" id="invoiceForm">
+        <div class="field">
+          <label for="inv-nombre">Nombre del propietario</label>
+          <input type="text" id="inv-nombre" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="inv-casa">N° de casa</label>
+            <input type="text" id="inv-casa" required>
+          </div>
+          <div class="field">
+            <label for="inv-periodo">Período</label>
+            <input type="text" id="inv-periodo" placeholder="Ej: Julio 2026" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="inv-monto">Cuota (USD)</label>
+            <input type="number" id="inv-monto" value="50" step="0.01" required>
+          </div>
+          <div class="field">
+            <label for="inv-tasa">Tasa BCV (Bs/USD)</label>
+            <input type="number" id="inv-tasa" step="0.01" required>
+          </div>
+        </div>
+        <p class="form-note">La tasa se completa sola con el valor de arriba; puedes editarla si es necesario.</p>
+        <button type="submit" class="btn btn-primary">Descargar factura en PDF</button>
+      </form>
+    </div>
+  </section>
+
+
+  <footer>
+    <p>Conjunto Residencial Vista Real</p>
+  </footer>
+
+  <script>
+    (function(){
+      var toggle = document.getElementById('navToggle');
+      var nav = document.getElementById('siteNav');
+      if(toggle && nav){
+        toggle.addEventListener('click', function(){
+          var expanded = toggle.getAttribute('aria-expanded') === 'true';
+          toggle.setAttribute('aria-expanded', String(!expanded));
+          nav.classList.toggle('is-open');
+        });
+        nav.querySelectorAll('a').forEach(function(link){
+          link.addEventListener('click', function(){
+            nav.classList.remove('is-open');
+            toggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+    })();
+
+    (function(){
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var items = document.querySelectorAll('.reveal');
+      if(prefersReduced || !('IntersectionObserver' in window)){
+        items.forEach(function(el){ el.classList.add('is-visible'); });
+        return;
+      }
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+      items.forEach(function(el){ observer.observe(el); });
+    })();
+  </script>
+  <script>
+    (function(){
+      var SHEET_CSV_URL = ""; // Pega aquí el link de tu Google Sheet publicado como CSV
+      var DETALLE_JUNTA_URL = "#"; // Pega aquí el link privado de la hoja para la Junta
+
+      var linkDetalle = document.getElementById('linkDetalleJunta');
+      if(linkDetalle && DETALLE_JUNTA_URL !== "#"){
+        linkDetalle.href = DETALLE_JUNTA_URL;
+        linkDetalle.target = "_blank";
+        linkDetalle.rel = "noopener";
+      }
+
+      function renderResumen(alDia, morosos, retraso, total, nota){
+        document.getElementById('numAlDia').textContent = alDia;
+        document.getElementById('numMorosos').textContent = morosos;
+        document.getElementById('numRetraso').textContent = retraso;
+        document.getElementById('pctCobranza').textContent = total ? Math.round(((alDia+retraso)/total)*100)+'%' : '—';
+        document.getElementById('resumenNota').textContent = nota;
+      }
+
+      function mostrarDemo(){
+        renderResumen(11, 3, 1, 15, 'Datos de ejemplo — conecta tu hoja de cálculo para ver los reales (ver comentario en el código).');
+      }
+
+      async function cargarResumen(){
+        if(!SHEET_CSV_URL){ mostrarDemo(); return; }
+        try{
+          var res = await fetch(SHEET_CSV_URL);
+          var text = await res.text();
+          var rows = text.trim().split('\n').map(function(r){ return r.split(','); });
+          var valores = {};
+          rows.forEach(function(r){
+            var label = (r[0]||'').replace(/"/g,'').trim().toLowerCase();
+            var val = parseFloat((r[1]||'').replace(/"/g,'').replace('%',''));
+            if(label && !isNaN(val)) valores[label] = val;
+          });
+          var alDia = valores['al día'] || 0;
+          var morosos = valores['morosos'] || 0;
+          var retraso = valores['pagaron con retraso'] || 0;
+          var total = valores['total de casas'] || (alDia+morosos+retraso);
+          if(total === 0) throw new Error('sin datos');
+          renderResumen(alDia, morosos, retraso, total, 'Datos en vivo desde la hoja de Resumen de Tesorería.');
+        }catch(err){
+          mostrarDemo();
+        }
+      }
+      cargarResumen();
+
+      async function cargarTasaBCV(){
+        try{
+          var res = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
+          if(!res.ok) throw new Error('respuesta no válida');
+          var data = await res.json();
+          var tasa = Number(data.promedio || data.venta || data.compra);
+          document.getElementById('tasaValor').textContent = 'Bs. ' + tasa.toLocaleString('es-VE', {minimumFractionDigits:2, maximumFractionDigits:2});
+          var fecha = data.fechaActualizacion ? new Date(data.fechaActualizacion) : new Date();
+          document.getElementById('tasaFecha').textContent = 'Actualizado: ' + fecha.toLocaleString('es-VE');
+          var tasaInput = document.getElementById('inv-tasa');
+          if(tasaInput && !tasaInput.value){ tasaInput.value = tasa.toFixed(2); }
+        }catch(err){
+          document.getElementById('tasaValor').textContent = 'No se pudo cargar automáticamente';
+          document.getElementById('tasaFecha').textContent = 'Ingresa la tasa manualmente en el formulario de factura.';
+        }
+      }
+      cargarTasaBCV();
+
+      var form = document.getElementById('invoiceForm');
+      if(form){
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          var nombre = document.getElementById('inv-nombre').value;
+          var casa = document.getElementById('inv-casa').value;
+          var periodo = document.getElementById('inv-periodo').value;
+          var monto = parseFloat(document.getElementById('inv-monto').value) || 0;
+          var tasa = parseFloat(document.getElementById('inv-tasa').value) || 0;
+          var montoBs = monto * tasa;
+          var recibo = 'VR-' + Date.now().toString().slice(-8);
+
+          var jsPDF = window.jspdf.jsPDF;
+          var doc = new jsPDF();
+
+          doc.setFont('helvetica','bold'); doc.setFontSize(16);
+          doc.text('Conjunto Residencial Vista Real', 20, 20);
+          doc.setDrawColor(198,154,59); doc.setLineWidth(1); doc.line(20,24,190,24);
+
+          doc.setFont('helvetica','normal'); doc.setFontSize(11);
+          doc.text('Recibo de condominio', 20, 34);
+          doc.text('N° de recibo: ' + recibo, 20, 41);
+          doc.text('Fecha de emisión: ' + new Date().toLocaleDateString('es-VE'), 20, 48);
+
+          doc.setDrawColor(200,200,200); doc.line(20,54,190,54);
+
+          doc.setFont('helvetica','bold'); doc.text('Propietario:', 20, 64);
+          doc.setFont('helvetica','normal'); doc.text(nombre, 60, 64);
+          doc.setFont('helvetica','bold'); doc.text('N° de casa:', 20, 71);
+          doc.setFont('helvetica','normal'); doc.text(casa, 60, 71);
+          doc.setFont('helvetica','bold'); doc.text('Período:', 20, 78);
+          doc.setFont('helvetica','normal'); doc.text(periodo, 60, 78);
+
+          doc.setDrawColor(200,200,200); doc.line(20,86,190,86);
+
+          doc.setFont('helvetica','bold'); doc.setFontSize(12);
+          doc.text('Cuota de condominio:', 20, 96);
+          doc.text('$' + monto.toFixed(2), 150, 96);
+          doc.text('Tasa BCV aplicada:', 20, 104);
+          doc.text('Bs. ' + tasa.toFixed(2) + ' / USD', 150, 104);
+          doc.setFontSize(14);
+          doc.text('Total a pagar:', 20, 116);
+          doc.text('Bs. ' + montoBs.toLocaleString('es-VE',{minimumFractionDigits:2, maximumFractionDigits:2}), 150, 116);
+
+          doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(120,120,120);
+          doc.text('Este recibo confirma el monto correspondiente a la cuota de condominio del período indicado.', 20, 130);
+
+          var nombreArchivo = 'recibo-' + casa.replace(/\s+/g,'') + '-' + periodo.replace(/\s+/g,'') + '.pdf';
+          doc.save(nombreArchivo);
+        });
+      }
+    })();
+  </script>
+
+</body>
+</html>
