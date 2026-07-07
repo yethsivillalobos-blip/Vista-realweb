@@ -561,6 +561,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>\n</head>
 <body>
 
+  <script>
+    if(sessionStorage.getItem("juntaAuth") !== "ok"){
+      window.location.href = "login-junta.html";
+    }
+  </script>
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="brand-link">
@@ -754,7 +759,7 @@
   <script>
     (function(){
       var SHEET_CSV_URL = ""; // Pega aquí el link de tu Google Sheet publicado como CSV
-      var DETALLE_JUNTA_URL = "#"; // Pega aquí el link privado de la hoja para la Junta
+      var DETALLE_JUNTA_URL = "https://docs.google.com/spreadsheets/d/1Buk1T8-pw1Y2LcoNIRrW2xZpTG79CWXYbxPDUBqb7BA/edit?usp=drivesdk";
 
       var linkDetalle = document.getElementById('linkDetalleJunta');
       if(linkDetalle && DETALLE_JUNTA_URL !== "#"){
@@ -772,7 +777,7 @@
       }
 
       function mostrarDemo(){
-        renderResumen(11, 3, 1, 15, 'Datos de ejemplo — conecta tu hoja de cálculo para ver los reales (ver comentario en el código).');
+        renderResumen(28, 3, 5, 36, 'Datos de ejemplo — conecta tu hoja de cálculo para ver los reales (ver comentario en el código).');
       }
 
       async function cargarResumen(){

@@ -561,6 +561,11 @@
 </head>
 <body>
 
+  <script>
+    if(sessionStorage.getItem("juntaAuth") !== "ok"){
+      window.location.href = "login-junta.html";
+    }
+  </script>
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="brand-link">

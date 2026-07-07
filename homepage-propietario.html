@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Presidencia — Vista Real</title>
-<meta name="description" content="Funciones de la Presidencia de la Junta de Condominio de Vista Real, según la Ley de Propiedad Horizontal.">
+<title>Mi portal — Vista Real</title>
+<meta name="description" content="Portal del propietario en Vista Real: estado de pagos y novedades.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -557,15 +557,123 @@
   .field-row{ display:flex; gap:14px; }
   .field-row .field{ flex:1; }
   .form-note{ font-size:0.85rem; color:rgba(21,20,15,0.55); margin:-4px 0 0; }
+
+  .login-wrap{
+    max-width:420px;
+    margin:0 auto;
+    padding:60px 24px 80px;
+  }
+  .login-wrap .eyebrow{ display:block; margin-bottom:10px; }
+  .login-wrap h1{ font-size:2rem; margin-bottom:10px; }
+  .login-wrap .sub{
+    font-size:0.98rem;
+    color:rgba(21,20,15,0.68);
+    margin-bottom:28px;
+    line-height:1.6;
+  }
+  .login-form{ display:flex; flex-direction:column; gap:16px; }
+  .field{ display:flex; flex-direction:column; gap:7px; }
+  .field label{ font-size:0.85rem; font-weight:700; }
+  .field input{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-size:1rem;
+    padding:13px 14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .field input:focus{ outline:3px solid var(--gold-deep); outline-offset:2px; border-color:var(--gold-deep); }
+  .form-msg{
+    font-size:0.88rem;
+    padding:12px 14px;
+    border-left:3px solid var(--gold);
+    background:var(--paper-soft);
+    display:none;
+  }
+  .form-msg.show{ display:block; }
+  .form-msg.error{ border-left-color:#B3453D; color:#8a2f29; }
+  .form-link{
+    font-size:0.85rem;
+    color:var(--gold-deep);
+    text-decoration:underline;
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-family:'Archivo', system-ui, sans-serif;
+    padding:0;
+    text-align:left;
+  }
+  .owner-card{
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    padding:22px;
+    margin-top:24px;
+  }
+  .owner-card p{ margin:0 0 8px; font-size:0.95rem; }
+  .owner-card p:last-child{ margin-bottom:0; }
+  .owner-card strong{ font-weight:700; }
+
+  /* ---------- Novedades ---------- */
+  .novedades-list{
+    margin-top:16px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .novedad{
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    padding:16px 18px;
+  }
+  .novedad-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .novedad-tag{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-weight:700;
+    font-size:0.66rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+  }
+  .novedad-fecha{
+    font-size:0.78rem;
+    color:rgba(21,20,15,0.5);
+  }
+  .novedad h4{
+    font-size:1rem;
+    font-weight:700;
+    margin:0 0 4px;
+  }
+  .novedad p{
+    margin:0;
+    font-size:0.92rem;
+    color:rgba(21,20,15,0.68);
+    line-height:1.55;
+  }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCefrKzgPOOQ96raVkOXyTW8jXzRg5nteM",
+      authDomain: "vista-real-condominio.firebaseapp.com",
+      projectId: "vista-real-condominio",
+      storageBucket: "vista-real-condominio.firebasestorage.app",
+      messagingSenderId: "526175423159",
+      appId: "1:526175423159:web:fc625e41b4604c121f1b32"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
 </head>
 <body>
 
-  <script>
-    if(sessionStorage.getItem("juntaAuth") !== "ok"){
-      window.location.href = "login-junta.html";
-    }
-  </script>
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="brand-link">
@@ -581,74 +689,35 @@
         <span></span><span></span><span></span>
       </button>
       <nav class="site-nav" id="siteNav">
-        <a href="index.html">Inicio</a>
+        <a href="index.html" aria-current="page">Inicio</a>
         <a href="nuestros-servicios.html">Servicios</a>
         <a href="sobre-mi.html">Sobre nosotros</a>
-        <a href="junta.html" aria-current="page">Junta</a>
+        <a href="login-junta.html">Junta</a>
         <a href="contacto.html">Contacto</a>
       </nav>
     </div>
   </header>
 
-  <section class="page-hero">
-    <div class="wrap">
-      <p class="eyebrow">Presidencia</p>
-      <h1>Presidencia de la Junta</h1>
-      <p class="sub">Ejerce la representación legal de la Junta de Condominio y vela por el cumplimiento del reglamento interno.</p>
+  <div class="login-wrap">
+    <span class="eyebrow">Portal propietarios</span>
+    <h1 id="saludo">Hola…</h1>
+    <p class="sub">Este es tu espacio como propietario de Vista Real.</p>
+    <div class="owner-card" id="ownerCard">
+      <p>Cargando tus datos…</p>
     </div>
-  </section>
+    <div class="cta-group" style="margin-top:24px;">
+      <a class="btn btn-secondary" href="nuestros-servicios.html">Ver servicios</a>
+      <button class="btn btn-secondary" id="logoutBtn" type="button">Cerrar sesión</button>
+    </div>
 
-  <div class="divider-wrap">
-    <svg class="roofline wrap" viewBox="0 0 720 34" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 30 L60 6 L120 30 L180 6 L240 30 L300 6 L360 30 L420 6 L480 30 L540 6 L600 30 L660 6 L720 30"/>
-    </svg>
+    <div style="margin-top:44px;">
+      <span class="eyebrow">Novedades</span>
+      <h2 style="font-size:1.3rem;font-weight:800;margin-top:8px;">Avisos y mejoras del conjunto</h2>
+      <div class="novedades-list" id="novedadesList">
+        <p style="font-size:0.92rem;color:rgba(21,20,15,0.55);">Cargando novedades…</p>
+      </div>
+    </div>
   </div>
-
-  <section class="services reveal">
-    <div class="wrap">
-      <div class="kicker">
-        <p class="eyebrow">Funciones principales</p>
-        <h2>Responsabilidades</h2>
-      </div>
-      <div class="duty-list">
-        <div class="duty">
-          <h3>Representación legal</h3>
-          <p>Representa a la Junta de Condominio ante propietarios, proveedores e instituciones.</p>
-        </div>
-        <div class="duty">
-          <h3>Presidir reuniones y asambleas</h3>
-          <p>Convoca y preside las reuniones de la Junta y las Asambleas de Copropietarios.</p>
-        </div>
-        <div class="duty">
-          <h3>Firma de documentos</h3>
-          <p>Firma la correspondencia y los documentos relacionados con las decisiones y acuerdos de la Junta.</p>
-        </div>
-        <div class="duty">
-          <h3>Cumplimiento del reglamento</h3>
-          <p>Vela por que se cumplan el Reglamento de Condominio y la Ley de Propiedad Horizontal.</p>
-        </div>
-        <div class="duty">
-          <h3>Relación con proveedores</h3>
-          <p>Gestiona la contratación de personal y servicios para el mantenimiento de las áreas comunes.</p>
-        </div>
-      </div>
-      <p class="role-note">Cargo contemplado en el Artículo 18 de la Ley de Propiedad Horizontal. Se elige junto al resto de la Junta por la Asamblea de Copropietarios, con una duración de un año y posibilidad de reelección.</p>
-    </div>
-  </section>
-
-  <section class="final-cta reveal">
-    <div class="wrap">
-      <svg class="roofline" viewBox="0 0 720 34" preserveAspectRatio="none" aria-hidden="true" style="margin-bottom:8px;">
-        <path d="M0 30 L60 6 L120 30 L180 6 L240 30 L300 6 L360 30 L420 6 L480 30 L540 6 L600 30 L660 6 L720 30"/>
-      </svg>
-      <p class="eyebrow" style="color:rgba(255,255,255,0.6);">Junta de Condominio</p>
-      <h2>Ver los demás paneles</h2>
-      <p class="sub">Secretaría, Tesorería y Vocería.</p>
-      <div class="cta-group">
-        <a class="btn btn-primary" href="junta.html">Volver a Junta</a>
-      </div>
-    </div>
-  </section>
 
 
   <footer>
@@ -691,6 +760,72 @@
       }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
       items.forEach(function(el){ observer.observe(el); });
     })();
+  </script>
+  <script>
+    var auth = firebase.auth();
+    var db = firebase.firestore();
+
+    auth.onAuthStateChanged(function(user){
+      if(!user){ window.location.href = 'login.html'; return; }
+      document.getElementById('saludo').textContent = 'Hola, ' + (user.email.split('@')[0]);
+      db.collection('propietarios').doc(user.uid).get().then(function(doc){
+        var card = document.getElementById('ownerCard');
+        if(doc.exists){
+          var d = doc.data();
+          card.innerHTML =
+            '<p><strong>Casa:</strong> ' + (d.casa || '—') + '</p>' +
+            '<p><strong>Estado:</strong> ' + (d.estado || '—') + '</p>' +
+            '<p><strong>Último pago registrado:</strong> ' + (d.ultimoPago || '—') + '</p>';
+        } else {
+          card.innerHTML = '<p>Tu cuenta ya está activa, pero la Tesorería todavía no cargó tus datos de pago. Escríbele por <a href="contacto.html" style="color:var(--gold-deep);">Contacto</a> si tienes dudas.</p>';
+        }
+      }).catch(function(){
+        document.getElementById('ownerCard').innerHTML = '<p>No se pudieron cargar tus datos en este momento.</p>';
+      });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function(){
+      auth.signOut().then(function(){ window.location.href = 'index.html'; });
+    });
+
+    function renderNovedades(items){
+      var list = document.getElementById('novedadesList');
+      if(!items.length){
+        list.innerHTML = '<p style="font-size:0.92rem;color:rgba(21,20,15,0.55);">Todavía no hay novedades publicadas.</p>';
+        return;
+      }
+      list.innerHTML = items.map(function(n){
+        return '<div class="novedad">' +
+          '<div class="novedad-top">' +
+            '<span class="novedad-tag">' + (n.tipo || 'Aviso') + '</span>' +
+            '<span class="novedad-fecha">' + (n.fecha || '') + '</span>' +
+          '</div>' +
+          '<h4>' + (n.titulo || '') + '</h4>' +
+          '<p>' + (n.mensaje || '') + '</p>' +
+        '</div>';
+      }).join('');
+    }
+
+    function novedadesDemo(){
+      renderNovedades([
+        { tipo:'Notificación', fecha:'Ejemplo', titulo:'Corte programado de agua', mensaje:'Este es un ejemplo de aviso — aquí se vería un corte de agua programado, con fecha y horario.' },
+        { tipo:'Aviso', fecha:'Ejemplo', titulo:'Reunión de propietarios', mensaje:'Este es un ejemplo — aquí se vería la convocatoria a una reunión, con fecha, hora y lugar.' },
+        { tipo:'Mejora', fecha:'Ejemplo', titulo:'Mantenimiento de áreas verdes', mensaje:'Este es un ejemplo de mejora del urbanismo publicada por la Junta.' }
+      ]);
+      var note = document.createElement('p');
+      note.style.cssText = 'font-size:0.8rem;color:rgba(21,20,15,0.45);margin-top:10px;';
+      note.textContent = 'Estos son ejemplos — la Junta aún no ha publicado novedades reales.';
+      document.getElementById('novedadesList').appendChild(note);
+    }
+
+    db.collection('novedades').orderBy('fechaOrden', 'desc').limit(10).get()
+      .then(function(snap){
+        if(snap.empty){ novedadesDemo(); return; }
+        var items = [];
+        snap.forEach(function(doc){ items.push(doc.data()); });
+        renderNovedades(items);
+      })
+      .catch(function(){ novedadesDemo(); });
   </script>
 
 </body>
