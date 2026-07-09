@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi portal — Vista Real</title>
-<meta name="description" content="Portal del propietario en Vista Real: estado de pagos y novedades.">
+<title>Crear cuenta — Vista Real</title>
+<meta name="description" content="Registro de propietarios en el portal de Vista Real.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -91,11 +91,6 @@
     align-items:center;
     justify-content:space-between;
     position:relative;
-  }
-  .brand-logo{
-    height:46px;
-    width:auto;
-    display:block;
   }
   .brand-link{
     display:flex;
@@ -619,78 +614,35 @@
   .owner-card p:last-child{ margin-bottom:0; }
   .owner-card strong{ font-weight:700; }
 
-  /* ---------- QR visitantes ---------- */
-  .qr-form{
-    margin-top:16px;
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-  }
-  .qr-form .field-row{ display:flex; gap:14px; }
-  .qr-form .field-row .field{ flex:1; }
-  .qr-result{
-    margin-top:20px;
-    border:1px solid var(--line);
-    border-left:4px solid var(--gold);
-    padding:20px;
-    text-align:center;
-    display:none;
-  }
-  .qr-result.show{ display:block; }
-  .qr-result img{ margin:0 auto 12px; }
-  .qr-result .vence{
-    font-size:0.9rem;
-    font-weight:700;
-    color:var(--gold-deep);
-  }
-  .qr-result .link-fallback{
-    margin-top:10px;
-    font-size:0.8rem;
-    color:rgba(21,20,15,0.5);
-    word-break:break-all;
-  }
-
-  /* ---------- Novedades ---------- */
-  .novedades-list{
-    margin-top:16px;
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-  }
-  .novedad{
-    border:1px solid var(--line);
-    border-left:4px solid var(--gold);
-    padding:16px 18px;
-  }
-  .novedad-top{
+  .google-btn{
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-content:center;
     gap:10px;
-    margin-bottom:6px;
-  }
-  .novedad-tag{
+    width:100%;
+    padding:13px 20px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
     font-family:'Archivo', system-ui, sans-serif;
     font-weight:700;
-    font-size:0.66rem;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:var(--gold-deep);
+    font-size:0.95rem;
+    cursor:pointer;
   }
-  .novedad-fecha{
-    font-size:0.78rem;
-    color:rgba(21,20,15,0.5);
+  .google-btn:hover{ border-color:var(--ink); }
+  .divider-or{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:6px 0;
+    font-size:0.8rem;
+    color:rgba(21,20,15,0.45);
   }
-  .novedad h4{
-    font-size:1rem;
-    font-weight:700;
-    margin:0 0 4px;
-  }
-  .novedad p{
-    margin:0;
-    font-size:0.92rem;
-    color:rgba(21,20,15,0.68);
-    line-height:1.55;
+  .divider-or::before, .divider-or::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
   }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -713,7 +665,13 @@
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="brand-link">
-        <img src="logo-vista-real.jpg" alt="Conjunto Residencial Vista Real" class="brand-logo">
+        <svg class="brandmark" viewBox="0 0 40 40" aria-hidden="true">
+          <path d="M2 32 L11 14 L20 32 Z M14 32 L23 8 L32 32 Z M26 32 L32 20 L38 32 Z"/>
+        </svg>
+        <span class="brandtext">
+          <span>CONJUNTO RESIDENCIAL</span>
+          <strong>VISTA REAL</strong>
+        </span>
       </a>
       <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="siteNav">
         <span></span><span></span><span></span>
@@ -722,70 +680,45 @@
         <a href="index.html" aria-current="page">Inicio</a>
         <a href="nuestros-servicios.html">Servicios</a>
         <a href="sobre-mi.html">Sobre nosotros</a>
-        <a href="login-junta.html">Junta</a>
+        <a href="junta.html">Junta</a>
         <a href="contacto.html">Contacto</a>
       </nav>
     </div>
   </header>
 
   <div class="login-wrap">
-    <span class="eyebrow">Portal propietarios</span>
-    <h1 id="saludo">Hola…</h1>
-    <p class="sub">Este es tu espacio como propietario de Vista Real.</p>
-    <div class="owner-card" id="ownerCard">
-      <p>Cargando tus datos…</p>
-    </div>
-    <div class="cta-group" style="margin-top:24px;">
-      <a class="btn btn-secondary" href="nuestros-servicios.html">Ver servicios</a>
-      <button class="btn btn-secondary" id="logoutBtn" type="button">Cerrar sesión</button>
-    </div>
+    <span class="eyebrow">Propietarios</span>
+    <h1>Crear cuenta</h1>
+    <p class="sub">Regístrate con tu correo o con Google. Después la Tesorería vincula tu cuenta con tu casa y tus pagos.</p>
 
-    <div style="margin-top:44px;">
-      <span class="eyebrow">Novedades</span>
-      <h2 style="font-size:1.3rem;font-weight:800;margin-top:8px;">Avisos y mejoras del conjunto</h2>
-      <div class="novedades-list" id="novedadesList">
-        <p style="font-size:0.92rem;color:rgba(21,20,15,0.55);">Cargando novedades…</p>
-      </div>
-    </div>
+    <button type="button" class="google-btn" id="googleBtn">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 009 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 013.68 9c0-.59.1-1.17.27-1.7V4.97H.96A9 9 0 000 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 00.96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      Continuar con Google
+    </button>
 
-    <div style="margin-top:44px;">
-      <span class="eyebrow">Control de acceso</span>
-      <h2 style="font-size:1.3rem;font-weight:800;margin-top:8px;">Generar QR para un visitante</h2>
-      <p style="font-size:0.92rem;color:rgba(21,20,15,0.68);margin-top:6px;">El código es válido por 1 hora desde que lo generas. Envíaselo a tu visitante para que lo muestre en la entrada.</p>
-      <form class="qr-form" id="qrForm">
-        <div class="field">
-          <label for="v-nombre">Nombre y apellido del visitante</label>
-          <input type="text" id="v-nombre" required>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="v-cedula">Cédula de identidad</label>
-            <input type="text" id="v-cedula" required>
-          </div>
-          <div class="field">
-            <label for="v-casa">Casa a la que se dirige</label>
-            <input type="text" id="v-casa" placeholder="Ej: Casa #15" required>
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="v-vehiculo">Vehículo</label>
-            <input type="text" id="v-vehiculo" placeholder="Ej: Toyota Corolla gris">
-          </div>
-          <div class="field">
-            <label for="v-placa">Placa</label>
-            <input type="text" id="v-placa">
-          </div>
-        </div>
-        <div class="form-msg" id="qrMsg"></div>
-        <button type="submit" class="btn btn-primary">Generar código QR</button>
-      </form>
-      <div class="qr-result" id="qrResult">
-        <img id="qrImg" src="" alt="Código QR del visitante" width="220" height="220">
-        <p class="vence" id="qrVence"></p>
-        <p class="link-fallback">Si el visitante no puede escanear, puede abrir este link: <span id="qrLink"></span></p>
+    <div class="divider-or">o con tu correo</div>
+
+    <form class="login-form" id="registroForm">
+      <div class="field">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" required>
       </div>
-    </div>
+      <div class="field">
+        <label for="casa">N° de casa</label>
+        <input type="text" id="casa" placeholder="Ej: Casa #15" required>
+      </div>
+      <div class="field">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="field">
+        <label for="password">Crea una clave</label>
+        <input type="password" id="password" minlength="6" required>
+      </div>
+      <div class="form-msg" id="formMsg"></div>
+      <button type="submit" class="btn btn-primary">Crear cuenta</button>
+    </form>
+    <p class="form-note" style="margin-top:16px;">¿Ya tienes cuenta? <a href="login.html" style="color:var(--gold-deep);">Inicia sesión</a></p>
   </div>
 
 
@@ -833,121 +766,54 @@
   <script>
     var auth = firebase.auth();
     var db = firebase.firestore();
+    var msg = document.getElementById('formMsg');
 
-    auth.onAuthStateChanged(function(user){
-      if(!user){ window.location.href = 'login.html'; return; }
-      document.getElementById('saludo').textContent = 'Hola, ' + (user.displayName || user.email.split('@')[0]);
-      var ownerRef = db.collection('propietarios').doc(user.uid);
-      ownerRef.get().then(function(doc){
-        var card = document.getElementById('ownerCard');
-        if(doc.exists){
-          var d = doc.data();
-          if(d.casa){
-            card.innerHTML =
-              '<p><strong>Casa:</strong> ' + d.casa + '</p>' +
-              '<p><strong>Estado:</strong> ' + (d.estado || '—') + '</p>' +
-              '<p><strong>Último pago registrado:</strong> ' + (d.ultimoPago || '—') + '</p>';
-            document.getElementById('v-casa').value = d.casa;
-          } else {
-            card.innerHTML =
-              '<p>Todavía no indicaste tu número de casa. Complétalo para que la Tesorería pueda vincular tus pagos:</p>' +
-              '<div class="field" style="margin-top:10px;"><input type="text" id="casaInput" placeholder="Ej: Casa #15"></div>' +
-              '<button class="btn btn-secondary" id="guardarCasaBtn" style="margin-top:10px;">Guardar</button>';
-            document.getElementById('guardarCasaBtn').addEventListener('click', function(){
-              var casa = document.getElementById('casaInput').value;
-              if(!casa) return;
-              ownerRef.update({ casa: casa }).then(function(){ window.location.reload(); });
-            });
-          }
-        } else {
-          card.innerHTML = '<p>Tu cuenta ya está activa, pero la Tesorería todavía no cargó tus datos de pago. Escríbele por <a href="contacto.html" style="color:var(--gold-deep);">Contacto</a> si tienes dudas.</p>';
-        }
-      }).catch(function(){
-        document.getElementById('ownerCard').innerHTML = '<p>No se pudieron cargar tus datos en este momento.</p>';
+    function showMsg(text, isError){
+      msg.textContent = text;
+      msg.classList.add('show');
+      msg.classList.toggle('error', !!isError);
+    }
+
+    function crearPerfilSiNoExiste(user, nombre, casa){
+      var ref = db.collection('propietarios').doc(user.uid);
+      return ref.get().then(function(doc){
+        if(doc.exists) return;
+        return ref.set({
+          nombre: nombre || user.displayName || '',
+          casa: casa || '',
+          estado: 'Pendiente',
+          ultimoPago: ''
+        });
       });
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', function(){
-      auth.signOut().then(function(){ window.location.href = 'index.html'; });
-    });
-
-    function renderNovedades(items){
-      var list = document.getElementById('novedadesList');
-      if(!items.length){
-        list.innerHTML = '<p style="font-size:0.92rem;color:rgba(21,20,15,0.55);">Todavía no hay novedades publicadas.</p>';
-        return;
-      }
-      list.innerHTML = items.map(function(n){
-        return '<div class="novedad">' +
-          '<div class="novedad-top">' +
-            '<span class="novedad-tag">' + (n.tipo || 'Aviso') + '</span>' +
-            '<span class="novedad-fecha">' + (n.fecha || '') + '</span>' +
-          '</div>' +
-          '<h4>' + (n.titulo || '') + '</h4>' +
-          '<p>' + (n.mensaje || '') + '</p>' +
-        '</div>';
-      }).join('');
     }
 
-    function novedadesDemo(){
-      renderNovedades([
-        { tipo:'Notificación', fecha:'Ejemplo', titulo:'Corte programado de agua', mensaje:'Este es un ejemplo de aviso — aquí se vería un corte de agua programado, con fecha y horario.' },
-        { tipo:'Aviso', fecha:'Ejemplo', titulo:'Reunión de propietarios', mensaje:'Este es un ejemplo — aquí se vería la convocatoria a una reunión, con fecha, hora y lugar.' },
-        { tipo:'Mejora', fecha:'Ejemplo', titulo:'Mantenimiento de áreas verdes', mensaje:'Este es un ejemplo de mejora del urbanismo publicada por la Junta.' }
-      ]);
-      var note = document.createElement('p');
-      note.style.cssText = 'font-size:0.8rem;color:rgba(21,20,15,0.45);margin-top:10px;';
-      note.textContent = 'Estos son ejemplos — la Junta aún no ha publicado novedades reales.';
-      document.getElementById('novedadesList').appendChild(note);
-    }
-
-    db.collection('novedades').orderBy('fechaOrden', 'desc').limit(10).get()
-      .then(function(snap){
-        if(snap.empty){ novedadesDemo(); return; }
-        var items = [];
-        snap.forEach(function(doc){ items.push(doc.data()); });
-        renderNovedades(items);
-      })
-      .catch(function(){ novedadesDemo(); });
-
-    // ---------- QR de visitante ----------
-    var qrMsg = document.getElementById('qrMsg');
-    document.getElementById('qrForm').addEventListener('submit', function(e){
+    document.getElementById('registroForm').addEventListener('submit', function(e){
       e.preventDefault();
-      var user = auth.currentUser;
-      if(!user){ return; }
-      var nombre = document.getElementById('v-nombre').value;
-      var cedula = document.getElementById('v-cedula').value;
-      var casa = document.getElementById('v-casa').value;
-      var vehiculo = document.getElementById('v-vehiculo').value;
-      var placa = document.getElementById('v-placa').value;
+      var nombre = document.getElementById('nombre').value;
+      var casa = document.getElementById('casa').value;
+      var email = document.getElementById('email').value;
+      var password = document.getElementById('password').value;
 
-      var ahora = new Date();
-      var expira = new Date(ahora.getTime() + 60*60*1000); // 1 hora
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(function(cred){ return crearPerfilSiNoExiste(cred.user, nombre, casa); })
+        .then(function(){ window.location.href = 'homepage-propietario.html'; })
+        .catch(function(err){
+          if(err.code === 'auth/email-already-in-use'){
+            showMsg('Ese correo ya tiene una cuenta. Inicia sesión en vez de registrarte.', true);
+          } else if(err.code === 'auth/weak-password'){
+            showMsg('La clave debe tener al menos 6 caracteres.', true);
+          } else {
+            showMsg('No se pudo crear la cuenta: ' + err.message, true);
+          }
+        });
+    });
 
-      qrMsg.classList.remove('show','error');
-      qrMsg.textContent = '';
-
-      db.collection('visitas').add({
-        nombre: nombre,
-        cedula: cedula,
-        casa: casa,
-        vehiculo: vehiculo,
-        placa: placa,
-        creadoPor: user.uid,
-        creadoEn: firebase.firestore.Timestamp.fromDate(ahora),
-        expiraEn: firebase.firestore.Timestamp.fromDate(expira),
-        ingresoRegistrado: false
-      }).then(function(docRef){
-        var url = window.location.origin + '/verificar-visita.html?id=' + docRef.id;
-        document.getElementById('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(url);
-        document.getElementById('qrVence').textContent = 'Válido hasta las ' + expira.toLocaleTimeString('es-VE', {hour:'2-digit', minute:'2-digit'});
-        document.getElementById('qrLink').textContent = url;
-        document.getElementById('qrResult').classList.add('show');
-      }).catch(function(err){
-        qrMsg.textContent = 'No se pudo generar el código: ' + err.message;
-        qrMsg.classList.add('show','error');
-      });
+    document.getElementById('googleBtn').addEventListener('click', function(){
+      var provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(function(cred){ return crearPerfilSiNoExiste(cred.user, cred.user.displayName, ''); })
+        .then(function(){ window.location.href = 'homepage-propietario.html'; })
+        .catch(function(err){ showMsg('No se pudo continuar con Google: ' + err.message, true); });
     });
   </script>
 

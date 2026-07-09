@@ -92,6 +92,11 @@
     justify-content:space-between;
     position:relative;
   }
+  .brand-logo{
+    height:46px;
+    width:auto;
+    display:block;
+  }
   .brand-link{
     display:flex;
     align-items:center;
@@ -235,7 +240,7 @@
   .btn-secondary:hover{ border-color:var(--ink); transform:translateY(-2px); }
 
   @media (min-width:560px){
-    .cta-group{ flex-direction:row; align-items:center; }
+    .cta-group{ flex-direction:row; align-items:center; flex-wrap:wrap; }
     .btn{ width:auto; }
   }
 
@@ -406,13 +411,7 @@
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="brand-link">
-        <svg class="brandmark" viewBox="0 0 40 40" aria-hidden="true">
-          <path d="M2 32 L11 14 L20 32 Z M14 32 L23 8 L32 32 Z M26 32 L32 20 L38 32 Z"/>
-        </svg>
-        <span class="brandtext">
-          <span>CONJUNTO RESIDENCIAL</span>
-          <strong>VISTA REAL</strong>
-        </span>
+        <img src="logo-vista-real.jpg" alt="Conjunto Residencial Vista Real" class="brand-logo">
       </a>
       <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="siteNav">
         <span></span><span></span><span></span>
@@ -434,8 +433,9 @@
       <h1>Tu condominio, sin complicaciones.</h1>
       <p class="sub">Pagos confirmados, avisos importantes y mejoras del urbanismo, todo en un solo lugar y siempre a mano.</p>
       <div class="cta-group">
-        <a class="btn btn-primary" href="login.html">Soy propietario</a>
-        <a class="btn btn-secondary" href="login-junta.html">Soy junta directiva</a>
+        <a class="btn btn-primary" href="login.html">Propietario</a>
+        <a class="btn btn-secondary" href="login-junta.html">Junta</a>
+        <a class="btn btn-secondary" href="login-vigilancia.html">Vigilancia</a>
       </div>
     </div>
   </section>
