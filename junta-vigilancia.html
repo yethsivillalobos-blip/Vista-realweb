@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Junta de Condominio — Vista Real</title>
-<meta name="description" content="Junta Directiva del Conjunto Residencial Vista Real: presidencia, secretaría, tesorería y vocería.">
+<title>Vigilancia — Vista Real</title>
+<meta name="description" content="Reportes de guardia del personal de vigilancia de Vista Real.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -557,7 +557,80 @@
   .field-row{ display:flex; gap:14px; }
   .field-row .field{ flex:1; }
   .form-note{ font-size:0.85rem; color:rgba(21,20,15,0.55); margin:-4px 0 0; }
+
+  .checklist{
+    margin-top:20px;
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    border:1px solid var(--line);
+  }
+  .check-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    border-top:1px solid var(--line);
+  }
+  .check-row:first-child{ border-top:none; }
+  .check-row span{ font-size:0.95rem; font-weight:600; }
+  .check-toggle{ display:flex; gap:8px; }
+  .check-toggle label{
+    font-size:0.8rem;
+    font-weight:700;
+    padding:7px 12px;
+    border:1px solid var(--line);
+    cursor:pointer;
+    user-select:none;
+  }
+  .check-toggle input{ position:absolute; opacity:0; pointer-events:none; }
+  .check-toggle input:checked + label{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .check-toggle input.novedad:checked + label{ background:#B3453D; color:#fff; border-color:#B3453D; }
+
+  .report-card{
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    padding:18px 20px;
+    margin-bottom:14px;
+  }
+  .report-card.alerta{ border-left-color:#B3453D; background:#FDEAEA; }
+  .report-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .report-top strong{ font-size:0.98rem; }
+  .report-top span{ font-size:0.78rem; color:rgba(21,20,15,0.5); }
+  .report-tags{ display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+  .report-tag{
+    font-family:'Archivo', system-ui, sans-serif;
+    font-size:0.7rem;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:20px;
+    border:1px solid var(--line);
+  }
+  .report-tag.bad{ border-color:#B3453D; color:#8a2f29; background:#FDEAEA; }
+  .report-tag.good{ border-color:var(--line); color:rgba(21,20,15,0.6); }
+  .report-obs{ font-size:0.92rem; color:rgba(21,20,15,0.72); margin-top:6px; }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCefrKzgPOOQ96raVkOXyTW8jXzRg5nteM",
+      authDomain: "vista-real-condominio.firebaseapp.com",
+      projectId: "vista-real-condominio",
+      storageBucket: "vista-real-condominio.firebasestorage.app",
+      messagingSenderId: "526175423159",
+      appId: "1:526175423159:web:fc625e41b4604c121f1b32"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
 </head>
 <body>
 
@@ -590,12 +663,11 @@
     </div>
   </header>
 
-  <!-- PAGE HERO -->
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">Junta de Condominio</p>
-      <h1>Junta Directiva de Vista Real</h1>
-      <p class="sub">Según la Ley de Propiedad Horizontal, la Junta de Condominio se compone de Presidente, Secretaría y Tesorería. Vista Real suma además una Vocería, como figura adicional para atender temas puntuales del conjunto.</p>
+      <p class="eyebrow">Vigilancia</p>
+      <h1>Reportes de guardia</h1>
+      <p class="sub">Últimos reportes cargados por el personal de vigilancia. Las novedades quedan resaltadas y además se notifican a los propietarios.</p>
     </div>
   </section>
 
@@ -605,54 +677,14 @@
     </svg>
   </div>
 
-  <!-- ROLES -->
-  <section class="benefits reveal">
+  <section class="services reveal">
     <div class="wrap">
       <div class="kicker">
-        <p class="eyebrow">Panel por función</p>
-        <h2>Elige un área</h2>
+        <p class="eyebrow">Más recientes</p>
+        <h2>Últimos 10 reportes</h2>
       </div>
-      <div class="role-list">
-        <a class="role-card" href="junta-presidencia.html">
-          <h3>Presidencia</h3>
-          <p>Representación legal de la junta, cumplimiento del reglamento y relación con proveedores de servicios.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-        <a class="role-card" href="junta-secretaria.html">
-          <h3>Secretaría</h3>
-          <p>Actas, archivo, correspondencia y convocatoria a reuniones y asambleas.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-        <a class="role-card" href="junta-tesoreria.html">
-          <h3>Tesorería</h3>
-          <p>Control de pagos, tasa de cambio del día y generación de facturas para los propietarios.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-        <a class="role-card" href="junta-vocero.html">
-          <h3>Vocería</h3>
-          <p>Atiende un área puntual del conjunto (seguridad, comunicación o eventos) por acuerdo interno.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-        <a class="role-card" href="junta-vigilancia.html">
-          <h3>Vigilancia</h3>
-          <p>Reportes de guardia del personal de vigilancia, con alertas automáticas ante cualquier novedad.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="final-cta reveal">
-    <div class="wrap">
-      <svg class="roofline" viewBox="0 0 720 34" preserveAspectRatio="none" aria-hidden="true" style="margin-bottom:8px;">
-        <path d="M0 30 L60 6 L120 30 L180 6 L240 30 L300 6 L360 30 L420 6 L480 30 L540 6 L600 30 L660 6 L720 30"/>
-      </svg>
-      <p class="eyebrow" style="color:rgba(255,255,255,0.6);">¿Tienes una inquietud?</p>
-      <h2>Escríbele a la junta</h2>
-      <p class="sub">Cualquier duda sobre la gestión del conjunto la puedes canalizar por acá.</p>
-      <div class="cta-group">
-        <a class="btn btn-primary" href="contacto.html">Ir a contacto</a>
+      <div id="reportesList">
+        <p style="font-size:0.92rem;color:rgba(21,20,15,0.55);">Cargando reportes…</p>
       </div>
     </div>
   </section>
@@ -698,6 +730,47 @@
       }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
       items.forEach(function(el){ observer.observe(el); });
     })();
+  </script>
+  <script>
+    var db = firebase.firestore();
+    var ITEM_LABELS = {
+      porton_principal: 'Portón principal',
+      porton_trasero: 'Portón trasero',
+      cerco_electrico: 'Cerco eléctrico',
+      luces: 'Luces internas/externas',
+      tanque: 'Tanque de agua',
+      bombas: 'Bombas #1 y #2'
+    };
+
+    function render(items){
+      var box = document.getElementById('reportesList');
+      if(!items.length){
+        box.innerHTML = '<p style="font-size:0.92rem;color:rgba(21,20,15,0.55);">Todavía no hay reportes cargados.</p>';
+        return;
+      }
+      box.innerHTML = items.map(function(d){
+        var tags = Object.keys(ITEM_LABELS).map(function(key){
+          var val = (d.checklist||{})[key];
+          var cls = val === 'novedad' ? 'bad' : 'good';
+          return '<span class="report-tag ' + cls + '">' + ITEM_LABELS[key] + (val === 'novedad' ? ' ⚠' : ' ✓') + '</span>';
+        }).join('');
+        return '<div class="report-card' + (d.tieneNovedad ? ' alerta' : '') + '">' +
+          '<div class="report-top"><strong>' + (d.vigilante||'') + ' — ' + (d.tipoRecorrido||'') + '</strong><span>' + (d.fecha||'') + '</span></div>' +
+          '<div class="report-tags">' + tags + '</div>' +
+          (d.observaciones ? '<p class="report-obs">' + d.observaciones + '</p>' : '') +
+        '</div>';
+      }).join('');
+    }
+
+    db.collection('reportesVigilancia').orderBy('fechaOrden','desc').limit(10).get()
+      .then(function(snap){
+        var items = [];
+        snap.forEach(function(doc){ items.push(doc.data()); });
+        render(items);
+      })
+      .catch(function(err){
+        document.getElementById('reportesList').innerHTML = '<p style="font-size:0.92rem;color:rgba(21,20,15,0.55);">No se pudieron cargar los reportes.</p>';
+      });
   </script>
 
 </body>

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Junta de Condominio — Vista Real</title>
-<meta name="description" content="Junta Directiva del Conjunto Residencial Vista Real: presidencia, secretaría, tesorería y vocería.">
+<title>Verificar visita — Vista Real</title>
+<meta name="description" content="Verificación de códigos QR de visitantes del Conjunto Residencial Vista Real.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -557,15 +557,45 @@
   .field-row{ display:flex; gap:14px; }
   .field-row .field{ flex:1; }
   .form-note{ font-size:0.85rem; color:rgba(21,20,15,0.55); margin:-4px 0 0; }
+
+  .verif-wrap{
+    max-width:460px;
+    margin:0 auto;
+    padding:56px 24px 80px;
+  }
+  .verif-status{
+    padding:16px 18px;
+    font-weight:700;
+    margin-bottom:20px;
+  }
+  .verif-status.ok{ background:#EAF4EA; color:#256029; border-left:4px solid #2E7D32; }
+  .verif-status.warn{ background:#FDEAEA; color:#8a2f29; border-left:4px solid #B3453D; }
+  .verif-status.info{ background:var(--paper-soft); color:var(--ink); border-left:4px solid var(--gold); }
+  .visit-data{
+    border:1px solid var(--line);
+    padding:20px;
+  }
+  .visit-data p{ margin:0 0 10px; font-size:0.98rem; }
+  .visit-data p:last-child{ margin-bottom:0; }
+  .visit-data strong{ display:inline-block; min-width:150px; }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCefrKzgPOOQ96raVkOXyTW8jXzRg5nteM",
+      authDomain: "vista-real-condominio.firebaseapp.com",
+      projectId: "vista-real-condominio",
+      storageBucket: "vista-real-condominio.firebasestorage.app",
+      messagingSenderId: "526175423159",
+      appId: "1:526175423159:web:fc625e41b4604c121f1b32"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
 </head>
 <body>
 
-  <script>
-    if(sessionStorage.getItem("juntaAuth") !== "ok"){
-      window.location.href = "login-junta.html";
-    }
-  </script>
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="brand-link">
@@ -581,81 +611,21 @@
         <span></span><span></span><span></span>
       </button>
       <nav class="site-nav" id="siteNav">
-        <a href="index.html">Inicio</a>
+        <a href="index.html" aria-current="page">Inicio</a>
         <a href="nuestros-servicios.html">Servicios</a>
         <a href="sobre-mi.html">Sobre nosotros</a>
-        <a href="junta.html" aria-current="page">Junta</a>
+        <a href="login-junta.html">Junta</a>
         <a href="contacto.html">Contacto</a>
       </nav>
     </div>
   </header>
 
-  <!-- PAGE HERO -->
-  <section class="page-hero">
-    <div class="wrap">
-      <p class="eyebrow">Junta de Condominio</p>
-      <h1>Junta Directiva de Vista Real</h1>
-      <p class="sub">Según la Ley de Propiedad Horizontal, la Junta de Condominio se compone de Presidente, Secretaría y Tesorería. Vista Real suma además una Vocería, como figura adicional para atender temas puntuales del conjunto.</p>
-    </div>
-  </section>
-
-  <div class="divider-wrap">
-    <svg class="roofline wrap" viewBox="0 0 720 34" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 30 L60 6 L120 30 L180 6 L240 30 L300 6 L360 30 L420 6 L480 30 L540 6 L600 30 L660 6 L720 30"/>
-    </svg>
+  <div class="verif-wrap">
+    <span class="eyebrow">Control de acceso</span>
+    <h1 style="font-size:1.8rem;margin-top:8px;">Verificar visita</h1>
+    <div id="statusBox" class="verif-status info">Buscando el código…</div>
+    <div id="dataBox"></div>
   </div>
-
-  <!-- ROLES -->
-  <section class="benefits reveal">
-    <div class="wrap">
-      <div class="kicker">
-        <p class="eyebrow">Panel por función</p>
-        <h2>Elige un área</h2>
-      </div>
-      <div class="role-list">
-        <a class="role-card" href="junta-presidencia.html">
-          <h3>Presidencia</h3>
-          <p>Representación legal de la junta, cumplimiento del reglamento y relación con proveedores de servicios.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-        <a class="role-card" href="junta-secretaria.html">
-          <h3>Secretaría</h3>
-          <p>Actas, archivo, correspondencia y convocatoria a reuniones y asambleas.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-        <a class="role-card" href="junta-tesoreria.html">
-          <h3>Tesorería</h3>
-          <p>Control de pagos, tasa de cambio del día y generación de facturas para los propietarios.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-        <a class="role-card" href="junta-vocero.html">
-          <h3>Vocería</h3>
-          <p>Atiende un área puntual del conjunto (seguridad, comunicación o eventos) por acuerdo interno.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-        <a class="role-card" href="junta-vigilancia.html">
-          <h3>Vigilancia</h3>
-          <p>Reportes de guardia del personal de vigilancia, con alertas automáticas ante cualquier novedad.</p>
-          <span class="go">Ver panel →</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="final-cta reveal">
-    <div class="wrap">
-      <svg class="roofline" viewBox="0 0 720 34" preserveAspectRatio="none" aria-hidden="true" style="margin-bottom:8px;">
-        <path d="M0 30 L60 6 L120 30 L180 6 L240 30 L300 6 L360 30 L420 6 L480 30 L540 6 L600 30 L660 6 L720 30"/>
-      </svg>
-      <p class="eyebrow" style="color:rgba(255,255,255,0.6);">¿Tienes una inquietud?</p>
-      <h2>Escríbele a la junta</h2>
-      <p class="sub">Cualquier duda sobre la gestión del conjunto la puedes canalizar por acá.</p>
-      <div class="cta-group">
-        <a class="btn btn-primary" href="contacto.html">Ir a contacto</a>
-      </div>
-    </div>
-  </section>
 
 
   <footer>
@@ -698,6 +668,87 @@
       }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
       items.forEach(function(el){ observer.observe(el); });
     })();
+  </script>
+  <script>
+    var db = firebase.firestore();
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id');
+    var statusBox = document.getElementById('statusBox');
+    var dataBox = document.getElementById('dataBox');
+
+    function fmtHora(ts){
+      if(!ts) return '';
+      return ts.toDate().toLocaleString('es-VE');
+    }
+
+    function pintarDatos(d){
+      dataBox.innerHTML =
+        '<div class="visit-data">' +
+          '<p><strong>Nombre:</strong> ' + (d.nombre||'') + '</p>' +
+          '<p><strong>Cédula:</strong> ' + (d.cedula||'') + '</p>' +
+          '<p><strong>Casa que visita:</strong> ' + (d.casa||'') + '</p>' +
+          '<p><strong>Vehículo:</strong> ' + (d.vehiculo||'—') + '</p>' +
+          '<p><strong>Placa:</strong> ' + (d.placa||'—') + '</p>' +
+        '</div>';
+    }
+
+    if(!id){
+      statusBox.className = 'verif-status warn';
+      statusBox.textContent = 'Este link no tiene un código válido.';
+    } else {
+      var ref = db.collection('visitas').doc(id);
+      ref.get().then(function(doc){
+        if(!doc.exists){
+          statusBox.className = 'verif-status warn';
+          statusBox.textContent = 'Código no encontrado o inválido.';
+          return;
+        }
+        var d = doc.data();
+        pintarDatos(d);
+        var ahora = new Date();
+        var expira = d.expiraEn ? d.expiraEn.toDate() : null;
+
+        if(d.ingresoRegistrado){
+          statusBox.className = 'verif-status info';
+          statusBox.textContent = 'Esta visita ya fue registrada' + (d.horaIngreso ? (' el ' + fmtHora(d.horaIngreso)) : '') + '.';
+          return;
+        }
+        if(expira && ahora > expira){
+          statusBox.className = 'verif-status warn';
+          statusBox.textContent = 'Este código venció a las ' + expira.toLocaleTimeString('es-VE', {hour:'2-digit', minute:'2-digit'}) + '.';
+          return;
+        }
+
+        statusBox.className = 'verif-status ok';
+        statusBox.innerHTML = 'Código vigente hasta las ' + expira.toLocaleTimeString('es-VE', {hour:'2-digit', minute:'2-digit'}) + '.';
+
+        var btn = document.createElement('button');
+        btn.className = 'btn btn-primary';
+        btn.style.marginTop = '16px';
+        btn.textContent = 'Registrar entrada';
+        btn.addEventListener('click', function(){
+          btn.disabled = true;
+          btn.textContent = 'Registrando…';
+          ref.update({
+            ingresoRegistrado: true,
+            horaIngreso: firebase.firestore.Timestamp.fromDate(new Date())
+          }).then(function(){
+            statusBox.className = 'verif-status ok';
+            statusBox.textContent = 'Entrada registrada correctamente.';
+            btn.remove();
+          }).catch(function(err){
+            btn.disabled = false;
+            btn.textContent = 'Registrar entrada';
+            statusBox.className = 'verif-status warn';
+            statusBox.textContent = 'No se pudo registrar: ' + err.message;
+          });
+        });
+        dataBox.appendChild(btn);
+      }).catch(function(err){
+        statusBox.className = 'verif-status warn';
+        statusBox.textContent = 'No se pudo consultar el código: ' + err.message;
+      });
+    }
   </script>
 
 </body>

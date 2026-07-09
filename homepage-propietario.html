@@ -614,6 +614,37 @@
   .owner-card p:last-child{ margin-bottom:0; }
   .owner-card strong{ font-weight:700; }
 
+  /* ---------- QR visitantes ---------- */
+  .qr-form{
+    margin-top:16px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .qr-form .field-row{ display:flex; gap:14px; }
+  .qr-form .field-row .field{ flex:1; }
+  .qr-result{
+    margin-top:20px;
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    padding:20px;
+    text-align:center;
+    display:none;
+  }
+  .qr-result.show{ display:block; }
+  .qr-result img{ margin:0 auto 12px; }
+  .qr-result .vence{
+    font-size:0.9rem;
+    font-weight:700;
+    color:var(--gold-deep);
+  }
+  .qr-result .link-fallback{
+    margin-top:10px;
+    font-size:0.8rem;
+    color:rgba(21,20,15,0.5);
+    word-break:break-all;
+  }
+
   /* ---------- Novedades ---------- */
   .novedades-list{
     margin-top:16px;
@@ -717,6 +748,45 @@
         <p style="font-size:0.92rem;color:rgba(21,20,15,0.55);">Cargando novedades…</p>
       </div>
     </div>
+
+    <div style="margin-top:44px;">
+      <span class="eyebrow">Control de acceso</span>
+      <h2 style="font-size:1.3rem;font-weight:800;margin-top:8px;">Generar QR para un visitante</h2>
+      <p style="font-size:0.92rem;color:rgba(21,20,15,0.68);margin-top:6px;">El código es válido por 1 hora desde que lo generas. Envíaselo a tu visitante para que lo muestre en la entrada.</p>
+      <form class="qr-form" id="qrForm">
+        <div class="field">
+          <label for="v-nombre">Nombre y apellido del visitante</label>
+          <input type="text" id="v-nombre" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="v-cedula">Cédula de identidad</label>
+            <input type="text" id="v-cedula" required>
+          </div>
+          <div class="field">
+            <label for="v-casa">Casa a la que se dirige</label>
+            <input type="text" id="v-casa" placeholder="Ej: Casa #15" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="v-vehiculo">Vehículo</label>
+            <input type="text" id="v-vehiculo" placeholder="Ej: Toyota Corolla gris">
+          </div>
+          <div class="field">
+            <label for="v-placa">Placa</label>
+            <input type="text" id="v-placa">
+          </div>
+        </div>
+        <div class="form-msg" id="qrMsg"></div>
+        <button type="submit" class="btn btn-primary">Generar código QR</button>
+      </form>
+      <div class="qr-result" id="qrResult">
+        <img id="qrImg" src="" alt="Código QR del visitante" width="220" height="220">
+        <p class="vence" id="qrVence"></p>
+        <p class="link-fallback">Si el visitante no puede escanear, puede abrir este link: <span id="qrLink"></span></p>
+      </div>
+    </div>
   </div>
 
 
@@ -776,6 +846,7 @@
             '<p><strong>Casa:</strong> ' + (d.casa || '—') + '</p>' +
             '<p><strong>Estado:</strong> ' + (d.estado || '—') + '</p>' +
             '<p><strong>Último pago registrado:</strong> ' + (d.ultimoPago || '—') + '</p>';
+          if(d.casa){ document.getElementById('v-casa').value = d.casa; }
         } else {
           card.innerHTML = '<p>Tu cuenta ya está activa, pero la Tesorería todavía no cargó tus datos de pago. Escríbele por <a href="contacto.html" style="color:var(--gold-deep);">Contacto</a> si tienes dudas.</p>';
         }
@@ -826,6 +897,46 @@
         renderNovedades(items);
       })
       .catch(function(){ novedadesDemo(); });
+
+    // ---------- QR de visitante ----------
+    var qrMsg = document.getElementById('qrMsg');
+    document.getElementById('qrForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var user = auth.currentUser;
+      if(!user){ return; }
+      var nombre = document.getElementById('v-nombre').value;
+      var cedula = document.getElementById('v-cedula').value;
+      var casa = document.getElementById('v-casa').value;
+      var vehiculo = document.getElementById('v-vehiculo').value;
+      var placa = document.getElementById('v-placa').value;
+
+      var ahora = new Date();
+      var expira = new Date(ahora.getTime() + 60*60*1000); // 1 hora
+
+      qrMsg.classList.remove('show','error');
+      qrMsg.textContent = '';
+
+      db.collection('visitas').add({
+        nombre: nombre,
+        cedula: cedula,
+        casa: casa,
+        vehiculo: vehiculo,
+        placa: placa,
+        creadoPor: user.uid,
+        creadoEn: firebase.firestore.Timestamp.fromDate(ahora),
+        expiraEn: firebase.firestore.Timestamp.fromDate(expira),
+        ingresoRegistrado: false
+      }).then(function(docRef){
+        var url = window.location.origin + '/verificar-visita.html?id=' + docRef.id;
+        document.getElementById('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(url);
+        document.getElementById('qrVence').textContent = 'Válido hasta las ' + expira.toLocaleTimeString('es-VE', {hour:'2-digit', minute:'2-digit'});
+        document.getElementById('qrLink').textContent = url;
+        document.getElementById('qrResult').classList.add('show');
+      }).catch(function(err){
+        qrMsg.textContent = 'No se pudo generar el código: ' + err.message;
+        qrMsg.classList.add('show','error');
+      });
+    });
   </script>
 
 </body>
