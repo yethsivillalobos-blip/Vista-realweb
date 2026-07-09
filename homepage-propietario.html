@@ -783,6 +783,7 @@
       <div class="qr-result" id="qrResult">
         <img id="qrImg" src="" alt="Código QR del visitante" width="220" height="220">
         <p class="vence" id="qrVence"></p>
+        <a class="btn btn-primary" id="qrWhatsapp" href="#" target="_blank" rel="noopener" style="margin-top:14px;display:inline-flex;">Enviar por WhatsApp</a>
         <p class="link-fallback">Si el visitante no puede escanear, puede abrir este link: <span id="qrLink"></span></p>
       </div>
     </div>
@@ -943,6 +944,8 @@
         document.getElementById('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(url);
         document.getElementById('qrVence').textContent = 'Válido hasta las ' + expira.toLocaleTimeString('es-VE', {hour:'2-digit', minute:'2-digit'});
         document.getElementById('qrLink').textContent = url;
+        var mensaje = 'Hola ' + nombre + ', este es tu código de acceso a Vista Real (casa ' + casa + '). Válido hasta las ' + expira.toLocaleTimeString('es-VE', {hour:'2-digit', minute:'2-digit'}) + '. Muéstralo en la entrada: ' + url;
+        document.getElementById('qrWhatsapp').href = 'https://wa.me/?text=' + encodeURIComponent(mensaje);
         document.getElementById('qrResult').classList.add('show');
       }).catch(function(err){
         qrMsg.textContent = 'No se pudo generar el código: ' + err.message;
