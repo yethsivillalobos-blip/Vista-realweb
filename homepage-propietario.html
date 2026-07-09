@@ -697,6 +697,18 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+    window.addEventListener('error', function(e){
+      var el = document.getElementById('qrMsg');
+      if(!el && document.body){
+        el = document.createElement('div');
+        el.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#B3453D;color:#fff;padding:14px;font-family:sans-serif;font-size:13px;z-index:9999;';
+        document.body.appendChild(el);
+      }
+      if(el){
+        el.textContent = 'Error técnico: ' + e.message;
+        el.classList.add('show','error');
+      }
+    });
     const firebaseConfig = {
       apiKey: "AIzaSyCefrKzgPOOQ96raVkOXyTW8jXzRg5nteM",
       authDomain: "vista-real-condominio.firebaseapp.com",
@@ -737,7 +749,6 @@
     </div>
     <div class="cta-group" style="margin-top:24px;">
       <a class="btn btn-secondary" href="nuestros-servicios.html">Ver servicios</a>
-      <button class="btn btn-secondary" id="logoutBtn" type="button">Cerrar sesión</button>
     </div>
 
     <div style="margin-top:44px;">
@@ -786,6 +797,10 @@
         <a class="btn btn-primary" id="qrWhatsapp" href="#" target="_blank" rel="noopener" style="margin-top:14px;display:inline-flex;">Enviar por WhatsApp</a>
         <p class="link-fallback">Si el visitante no puede escanear, puede abrir este link: <span id="qrLink"></span></p>
       </div>
+    </div>
+
+    <div class="cta-group" style="margin-top:44px;">
+      <button class="btn btn-secondary" id="logoutBtn" type="button">Cerrar sesión</button>
     </div>
   </div>
 
